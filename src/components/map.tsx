@@ -4,9 +4,9 @@ import '../app/globals.css'
 import L from 'leaflet';
 import { LatLng } from 'leaflet';
 import React, { useState, useEffect } from 'react';
-import Dropdown from '../components/dropdown';
-import LineChart from '../components/RiskChart';
-import Grid from '../components/grid';
+import Dropdown from './dropdown';
+import LineChart from './RiskChart';
+import Grid from './grid';
 
 import 'reactjs-popup/dist/index.css';
 import '../app/globals.css';
@@ -21,7 +21,7 @@ const fontAwesomeIcon = L.divIcon({
 });
 const duckIcon = new L.Icon({
     iconUrl: './marker-red.png',
-    
+
     iconRetinaUrl: './marker-red.png',
     iconAnchor: new L.Point(0, 0),
     popupAnchor: new L.Point(16, 0),
@@ -55,25 +55,22 @@ const Map = () =>
     const [bCategories, setBCategories] = useState<string[]>([]);
     const [gridData, setGridData] = useState<any[]>([]);
     const [selectedValue, setSelectedValue] = useState('2030');
-    // const [columnDefs] = useState([
-    //     { field: 'asset', filter: 'agTextColumnFilter', sortable: true },
-    //     { field: 'category', filter: 'agTextColumnFilter', sortable: true },
-    //     { field: 'rating', filter: 'agNumberColumnFilter', sortable: true },
-    //     { field: 'riskFactor', filter: 'agTextColumnFilter', width: 500, cellRenderer: CellButton }
-    // ]);
+    const [isMounted, setIsMounted] = React.useState(false);
+
     useEffect(() =>
     {
-        fetchData();
-    }, []);
 
-    const fetchData = async (): Promise<void> =>
-    {
-        const response = await fetch(sheetURL);
-        const textData = await response.text();
-        riskData = convertToJSON(textData);
-        handleDropdownChange(selectedValue);
-        initChartData(riskData)
-    };
+        const fetchData = async (): Promise<void> =>
+        {
+            const response = await fetch(sheetURL);
+            const textData = await response.text();
+            riskData = convertToJSON(textData);
+            handleDropdownChange(selectedValue);
+            initChartData(riskData)
+        };
+        fetchData();
+        setIsMounted(true);
+    }, []);
 
     const initChartData = (riskData: any) =>
     {
@@ -164,9 +161,10 @@ const Map = () =>
     {
         setSelectedValue(newValue);
         const markers = riskData.filter((m: any) =>
-            m['decade'] == selectedValue
+            m['decade'] == newValue
         );
         setData(markers);
+        console.log(markers);
         setGridData(markers);
     }
 
@@ -178,20 +176,20 @@ const Map = () =>
                     <Dropdown options={options} onChange={handleDropdownChange} />
                     <div className='text-center font-bold text-xl'>{selectedValue}</div><hr></hr>
                     <div className='mt-3 ml-3 mr-3 mb-4'>
-                        <MapContainer minZoom={3} ref={mapRef} preferCanvas={true} center={[46.1351, -90.1831]} zoom={2} style={{ height: 450, width: "100%" }}>
+                        {isMounted && <MapContainer minZoom={3} ref={mapRef} preferCanvas={true} center={[46.1351, -90.1831]} zoom={2} style={{ height: 450, width: "100%" }}>
                             <TileLayer noWrap={true}
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             />
                             {data.map((item: any, index: number) => (
                                 <div key={index}>
-                                    <Marker position={[item.latlng.lat, item.latlng.lng]} icon={fontAwesomeIcon}>
+                                    {/* <Marker position={[item.latlng.lat, item.latlng.lng]} icon={fontAwesomeIcon}>
                                         <Popup>
                                             <strong>Asset Name: </strong>{item.asset} <br />
                                             <strong>Business Category:</strong> {item.category}
                                         </Popup>
-                                    </Marker>
-                                    {/* <CircleMarker fill={true} fillOpacity={100} fillColor={getRiskColor(item.rating)} eventHandlers={{
+                                    </Marker> */}
+                                    <CircleMarker fill={true} fillOpacity={100} fillColor={getRiskColor(item.rating)} eventHandlers={{
                                         mouseover: (event) => event.target.openPopup(),
                                     }}
                                         color={getRiskColor(item.rating)}
@@ -200,12 +198,12 @@ const Map = () =>
                                             <strong>Asset Name: </strong>{item.asset} <br />
                                             <strong>Business Category:</strong> {item.category}
                                         </Popup>
-                                    </CircleMarker> */}
+                                    </CircleMarker>
                                 </div>
                             ))}
                             <Markers />
                             <SetViewOnClick />
-                        </MapContainer>
+                        </MapContainer>}
                     </div>
                 </div>
                 {/* <DataTable data={data}></DataTable> */}

@@ -11,7 +11,7 @@ Chart.register(CategoryScale);
 
 function Index() {
   const Map = dynamic(
-    () => import('./map'), // replace '@components/map' with your component's location
+    () => import('../components/map'), // replace '@components/map' with your component's location
     { 
       loading: () => <p>A map is loading</p>,
       ssr: false 

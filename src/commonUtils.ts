@@ -13,3 +13,22 @@ export function arrayToObj(array: any[]) {
         return obj;
       }, {});
 }
+
+export const getRiskColor = (rating: number): string =>
+    {
+        if (rating < 0.1) {
+            return '#3ffc19';
+        } else if (rating < 0.2) {
+            return '#d8f51b';
+        } else if (rating < 0.4) {
+            return '#f5d01b';
+        } else if (rating < 0.6) {
+            return '#f09c0c';
+        } else if (rating < 0.8) {
+            return '#f06f0c';
+        } else if (rating < 0.9) {
+            return '#f0410c';
+        } else {
+            return '#ff0000';
+        }
+}
