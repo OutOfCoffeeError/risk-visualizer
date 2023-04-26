@@ -7,29 +7,12 @@ import React, { useState, useEffect } from 'react';
 import Dropdown from './dropdown';
 import LineChart from './RiskChart';
 import Grid from './grid';
+import {SHEET_URL} from '../constants';
 
 import 'reactjs-popup/dist/index.css';
 import '../app/globals.css';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-
-
-const fontAwesomeIcon = L.divIcon({
-    html: "<FontAwesomeIcon cursor='pointer' size='xl' icon={faChartSimple}/>",
-    iconSize: [20, 20],
-    className: 'myDivIcon'
-});
-const duckIcon = new L.Icon({
-    iconUrl: './marker-red.png',
-
-    iconRetinaUrl: './marker-red.png',
-    iconAnchor: new L.Point(0, 0),
-    popupAnchor: new L.Point(16, 0),
-    iconSize: new L.Point(32, 32),
-    className: 'hi-sev'
-});
-
-const sheetURL = 'https://docs.google.com/spreadsheets/d/1Y_yiT-_7IimioBvcqiCPwLzTLazfdRyzZ4k3cpQXiAw/gviz/tq?tqx=out:json&tq&gid=681415175';
 
 let riskData: any[];
 let mapRef: any;
@@ -62,20 +45,15 @@ const Map = () =>
 
         const fetchData = async (): Promise<void> =>
         {
-            const response = await fetch(sheetURL);
+            const response = await fetch(SHEET_URL);
             const textData = await response.text();
             riskData = convertToJSON(textData);
             handleDropdownChange(selectedValue);
-            initChartData(riskData)
         };
         fetchData();
         setIsMounted(true);
     }, []);
 
-    const initChartData = (riskData: any) =>
-    {
-
-    }
 
     const convertToJSON = (data: string) =>
     {
@@ -87,7 +65,6 @@ const Map = () =>
                 headers.push(heading.label);
             }
         });
-        console.log(headers);
         let sheetJson: any[] = [];
         let yearsSet = new Set<number>();
         let locationSet = new Set<string>();
@@ -111,7 +88,6 @@ const Map = () =>
 
             sheetJson.push({ 'latlng': latLng, 'asset': assetName, 'category': bCategory, 'rating': row['Risk Rating'], 'riskFactor': row['Risk Factors'], 'decade': decade });
         });
-        console.log(sheetJson);
         options = Array.from(yearsSet.values()).sort();
         setAssets(Array.from(assetSet.values()));
         setLocations(Array.from(locationSet.values()));
@@ -125,7 +101,6 @@ const Map = () =>
         const map = useMapEvents({
             moveend(e)
             {
-                console.log(mapRef.getBounds());
                 const currDecadeMarkers = riskData.filter((m: any) =>
                     m['decade'] == selectedValue
                 );
@@ -164,7 +139,6 @@ const Map = () =>
             m['decade'] == newValue
         );
         setData(markers);
-        console.log(markers);
         setGridData(markers);
     }
 
