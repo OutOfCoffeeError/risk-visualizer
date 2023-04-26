@@ -17,6 +17,7 @@
 }
 
 body {
+  background-color: black;
   /* color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -25,4 +26,27 @@ body {
     )
     rgb(var(--background-start-rgb)); */
 }
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
+.bg-white {
+  background-color: rgb(71, 85, 105);
+  color: whitesmoke;
+}
+
+.row {
+  display: flex;
+  
+}
+
+.dropdown-op {
+  color: white;
+  background-color: black;
+  border-color: aliceblue;
+}
+
+.dropdown-cls {
+  background-color: black;
+}

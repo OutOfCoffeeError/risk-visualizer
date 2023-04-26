@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import '../app/globals.css';
+
 interface DropdownProps
 {
     options: any[];
@@ -9,7 +11,7 @@ interface DropdownProps
 function Dropdown(props: DropdownProps)
 {
 
-    const [selectedValue, setSelectedValue] = useState(props && props.options ? props.options[0] : '');
+    const [selectedValue, setSelectedValue] = useState(props?.options?.[0] && '');
 
     function handleDropdownChange(event: React.ChangeEvent<HTMLSelectElement>)
     { 
@@ -19,9 +21,9 @@ function Dropdown(props: DropdownProps)
     }
 
     return (
-        <select className='border-solid border-2 border-sky-500 mt-6 ml-3' value={selectedValue} onChange={handleDropdownChange}>
+        <select className='border-solid rounded-md border-2 w-60 border-sky-500 mt-3 ml-3 dropdown-cls' value={selectedValue} onChange={handleDropdownChange}>
             {props.options?.map((option) => (
-                <option key={option} value={option}>
+                <option className='dropdown-op' key={option} value={option}>
                     {option}
                 </option>
             ))}

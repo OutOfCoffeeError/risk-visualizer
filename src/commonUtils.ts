@@ -6,3 +6,10 @@ export function formatRiskFactors(jsonStr: string): string {
     }
     return table;
 }
+
+export function arrayToObj(array: any[]) {
+    return array.reduce(function(obj, v) {
+        obj[v] = 0;
+        return obj;
+      }, {});
+}

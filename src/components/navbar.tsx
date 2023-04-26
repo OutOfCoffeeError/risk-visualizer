@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartSimple } from '@fortawesome/free-solid-svg-icons'
 
 
 const Navbar = () =>
 {
 
     return (<>
-        <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-slate-500 mb-3">
+        <nav className="relative flex flex-wrap items-center justify-between px-2 py-3 bg-slate-600 ">
           <div className="container px-4 mx-auto flex flex-wrap items-center justify-between">
             <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
+            <FontAwesomeIcon color='white' cursor='pointer' size='xl' icon={faChartSimple}/>
               <a
-                className="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white"
+                className="text-md font-bold leading-relaxed inline-block mr-4 ml-2 py-2 whitespace-nowrap uppercase text-white"
                 href="#pablo"
               >
                 Risk Visualization
