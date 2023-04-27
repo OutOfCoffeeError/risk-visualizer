@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart as ChartJS } from 'chart.js/auto'
 import { Chart } from 'react-chartjs-2'
 import Dropdown from "./dropdown";
 import { arrayToObj } from "../commonUtils"
+import ChartCore from "chart.js/auto";
+import { CategoryScale } from "chart.js";
+
+ChartCore.register(CategoryScale);
 
 interface ChartProps
 {
@@ -12,6 +16,9 @@ interface ChartProps
     locOptions: string[];
     businessOptions: string[];
     decades: any;
+    markerAsset? : string,
+    markerCategory? : string,
+    markerLocation? : string
 }
 
 const chartDataConf = {
@@ -51,45 +58,36 @@ const chartDataConf = {
 const generateAssetData = (riskData: any, asset: string, decades: never[]): never[] =>
 {
     if (!asset) return [];
-    console.log("ASSET GEN");
     let dataForDecade = arrayToObj(decades);
     let currentAssetData = riskData.filter((e: any) => (e.asset == asset));
-    console.log(currentAssetData);
     currentAssetData.forEach((e: any) =>
     {
         dataForDecade[e.decade] = e.rating;
     });
-    console.log(dataForDecade);
     return Object.values(dataForDecade);
 }
 
 const generateLocData = (riskData: any, location: string, decades: never[]): never[] =>
 {
     if (!location) return [];
-    console.log("LOC GEN");
     let dataForDecade = arrayToObj(decades);
     let currentLocData = riskData.filter((e: any) => (e.latlng.lat + ',' + e.latlng.lng == location));
-    console.log(currentLocData);
     currentLocData.forEach((e: any) =>
     {
         dataForDecade[e.decade] = e.rating;
     });
-    console.log(dataForDecade);
     return Object.values(dataForDecade);
 }
 
 const generateBCategoryData = (riskData: any, category: string, decades: never[]): never[] =>
 {
     if (!category) return [];
-    console.log("CAT GEN");
     let dataForDecade = arrayToObj(decades);
     let currentCategoryData = riskData.filter((e: any) => (e.category == category));
-    console.log(currentCategoryData);
     currentCategoryData.forEach((e: any) =>
     {
         dataForDecade[e.decade] = e.rating;
     });
-    console.log(dataForDecade);
     return Object.values(dataForDecade);
 }
 
@@ -121,17 +119,25 @@ function LineChart(props: ChartProps)
     const [businessOptions] = useState(props.businessOptions);
     const [selectedBusiness, setSelectedBusinessValue] = useState(props && props.businessOptions ? props.businessOptions[0] : '');
 
+    useEffect(() => {
+        if(props.markerAsset && props.markerCategory && props.markerLocation) {
+            handleAssetChange(props.markerAsset);
+            handleBusinessChange(props.markerCategory);
+            handleLocChange(props.markerLocation);
+        }
+    }, [props.markerAsset, props.markerCategory, props.markerLocation]);
+
     function handleLocChange(newValue: string)
     {
         setSelectedLocValue(newValue);
         chartRef.data.datasets[0].label = 'Location: ' + newValue;
         chartRef.data.datasets[0].data = generateLocData(props.riskData, newValue, props.decades);
+        
     }
 
     function handleAssetChange(newValue: string)
     {
         setSelectedAssetValue(newValue);
-        // setChartData(chartDataConf);
         chartRef.data.datasets[1].label = 'Asset: ' + newValue;
         chartRef.data.datasets[1].data = generateAssetData(props.riskData, newValue, props.decades);
     }
@@ -148,19 +154,18 @@ function LineChart(props: ChartProps)
             <div className='flex justify-around'>
                 <div>
                     <label className='mt-3'>Asset Name:</label>
-                    <Dropdown options={assetOptions} onChange={handleAssetChange} />
+                    <Dropdown selectedVal={selectedAsset} options={assetOptions} onChange={handleAssetChange} />
                 </div>
                 <div>
                     <label className='mt-3'>Location Coordinates:</label>
-                    <Dropdown options={locOptions} onChange={handleLocChange} />
+                    <Dropdown selectedVal={selectedLoc} options={locOptions} onChange={handleLocChange} />
                 </div>
                 <div>
                     <label className='mt-3'>Business Category</label>
-                    <Dropdown options={businessOptions} onChange={handleBusinessChange} />
+                    <Dropdown selectedVal={selectedBusiness} options={businessOptions} onChange={handleBusinessChange} />
                 </div>
             </div>
             <div className="chart-container mt-3">
-                {/* <h2 style={{ textAlign: "center" }}>Line Chart</h2> */}
                 <Line height={7} width={20} ref={(reference) => chartRef = reference}
                     data={chartData}
                     options={{
