@@ -1,12 +1,19 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+"use client"
+import dynamic from 'next/dynamic';
+import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      
-    </main>
+function Home() {
+  const Map = dynamic(
+    () => import('../components/map'), // replace '@components/map' with your component's location
+    { 
+      loading: () => <div className='mapLoaderCls'><p>Loading map...</p></div>,
+      ssr: false 
+    } // This line is important. It's what prevents server-side render
   )
+  return (<div>
+      <Map />
+    </div>)
 }
+
+export default Home
